@@ -7,78 +7,53 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root { 
-      --bg: #030308; /* Background color */
-      --fg: #e6eef8; /* Text color */
-      --acc: #1a1a1a; /* Accent background */
-      --hvr: #2a2a2a; /* Hover effect color */
+      --bg: #030308;
+      --fg: #e6eef8;
+      --acc: #1a1a1a;
+      --hvr: #2a2a2a;
     }
 
     body { 
       margin: 0; 
       font-family: 'Inter', sans-serif; 
       background: var(--bg); 
-      color: var(--fg); 
+      color: var(--fg);
       display: flex; 
       flex-direction: column; 
-      justify-content: center; 
       align-items: center; 
       height: 100vh; 
-      text-align: center; 
-      overflow: hidden; 
+      text-align: center;
+      overflow: hidden;
+
+      /* NEW — recenters page */
+      justify-content: flex-start;
+      padding-top: 60px;
     }
 
     h1.clock { 
       font-size: 3rem; 
-      margin: 0 0 10px; 
+      margin: 0 0 20px;
       font-weight: 600; 
       letter-spacing: 1px; 
-      animation: fade 1s ease; 
-    }
-    
-    .search-container { 
-      display: flex; 
-      align-items: center; 
-      background: var(--acc); /* Updated to use accent color */
-      padding: 12px 18px; 
-      border-radius: 2rem; 
-      box-shadow: 0 6px 30px rgba(0,0,0,0.7); 
-      animation: pop 0.6s ease; 
-      width: 550px; 
-      max-width: 90%; 
+      animation: fade 1s ease;
     }
 
-    .search-container input { 
-      flex: 1; 
-      background: 0 0; 
-      border: 0; 
-      outline: 0; 
-      color: #fff; 
-      font-size: 1rem; 
-      padding: 5px; 
-    }
-
-    .search-container select { 
-      background: var(--acc); /* Updated to use accent color */
-      border: 0; 
-      color: #fff; 
-      border-radius: .5rem; 
-      padding: 6px 10px; 
-      margin-left: 10px; 
-      cursor: pointer; 
-      transition: .2s; 
-    }
-
-    .search-container select:hover { 
-      background: var(--hvr); /* Updated hover effect */
+    /* NEW — shortcut title spacing */
+    #shortcutsTitle {
+      margin-top: 10px;
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+      font-weight: 600;
+      opacity: 0.85;
+      animation: fade 1s ease;
     }
 
     .icons { 
       display: grid; 
       grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); 
       gap: 20px; 
-      margin-top: 30px; 
       width: 400px; 
-      max-width: 90%; 
+      max-width: 90%;
     }
 
     .shortcut-item { 
@@ -93,7 +68,7 @@
     .icon { 
       width: 65px; 
       height: 65px; 
-      background: var(--acc); /* Accent background color */
+      background: var(--acc); 
       border-radius: 1rem; 
       display: flex; 
       justify-content: center; 
@@ -106,7 +81,7 @@
 
     .shortcut-item:hover .icon { 
       transform: translateY(-4px) scale(1.1); 
-      background: var(--hvr); /* Hover effect */
+      background: var(--hvr); 
     }
 
     .shortcut-label { 
@@ -176,18 +151,11 @@
 </head>
 <body>
   <div class="loading-overlay" id="loader"><div class="spinner"></div></div>
+
   <h1 class="clock">00:00:00</h1>
 
-  <form id="searchForm" class="search-container">
-    <input type="text" id="searchInput" placeholder="Search..." autocomplete="off">
-<select id="engineSelect">
-  <option value="https://search.brave.com/search?q=">Brave Search</option>
-  <option value="https://duckduckgo.com/?q=" selected>Duck Duck Go</option>
-  <option value="https://www.google.com/search?q=">Google</option>
-  <option value="https://www.bing.com/search?q=">Bing</option>
-</select>
-
-  </form>
+  <!-- NEW SHORTCUT LABEL -->
+  <h2 id="shortcutsTitle">Shortcuts:</h2>
 
   <div class="icons" id="iconGrid">
     <div class="shortcut-item"><a href="https://youtube.com" class="icon"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg"></a><span>YouTube</span></div>
@@ -218,14 +186,7 @@
     // Clock
     setInterval(() => $('.clock').textContent = new Date().toLocaleTimeString(), 1000);
 
-    // Search
-    $('#searchForm').onsubmit = e => {
-      e.preventDefault();
-      const q = $('#searchInput').value.trim();
-      if(q) nav($('#engineSelect').value + encodeURIComponent(q));
-    };
-
-    // Handle clicks for both <a> tags and the Add New button
+    // Handle shortcut clicks + add new
     $('#iconGrid').onclick = e => {
       const link = e.target.closest('a');
       const addBtn = e.target.closest('#addNewShortcut');
@@ -239,7 +200,7 @@
         let url = prompt("URL:");
         if (!url) return;
         if (!url.startsWith('http')) url = 'https://' + url;
-        
+
         const shortcuts = JSON.parse(localStorage.getItem('shortcuts') || '[]');
         shortcuts.push({ name, url });
         localStorage.setItem('shortcuts', JSON.stringify(shortcuts));
@@ -247,12 +208,12 @@
       }
     };
 
-    // Render Custom Shortcuts
+    // Render saved shortcuts
     function renderCustom() {
       document.querySelectorAll('.custom').forEach(e => e.remove());
       const shortcuts = JSON.parse(localStorage.getItem('shortcuts') || '[]');
       const addContainer = $('#addNewShortcut').parentElement;
-      
+
       shortcuts.forEach(s => {
         const div = document.createElement('div');
         div.className = 'shortcut-item custom';
@@ -261,13 +222,13 @@
       });
     }
 
-    // Quotes from external file
+    // Quotes
     if (window.QUOTES && window.QUOTES.length > 0) {
       $('#quote').textContent = window.QUOTES[Math.floor(Math.random() * window.QUOTES.length)];
     } else {
       $('#quote').textContent = "“The best error message is the one that never shows up.”";
     }
-    
+
     renderCustom();
   </script>
 </body>
