@@ -2,7 +2,7 @@
 const basePath = '/Staticsj/';
 
 // Match the default in script.js
-const DEFAULT_WISP = "wss://dash.goip.de/wisp/"; 
+const DEFAULT_WISP = "wss://wisp.rhw.one/wisp/"; 
 
 let _CONFIG = {
   wispurl: localStorage.getItem("proxServer") || DEFAULT_WISP,
